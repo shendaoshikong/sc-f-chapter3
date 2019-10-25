@@ -1,0 +1,33 @@
+#总结：在配置中心无论有无配置rabbitmq，他都会自己刷新配置数据
+
+#spring.cloud.config.server.git.uri：配置git仓库地址
+#spring.cloud.config.server.git.searchPaths：配置仓库路径
+#spring.cloud.config.label：配置仓库的分支
+#spring.cloud.config.server.git.username：访问git仓库的用户名
+#spring.cloud.config.server.git.password：访问git仓库的用户密码
+
+#如果Git仓库为公开仓库，可以不填写用户名和密码，如果是私有仓库需要填写，本例子是公开仓库，放心使用。
+#远程仓库https://github.com/forezp/SpringcloudConfig/ 中有个文件config-client-dev.properties文件
+# 中有一个属性：
+#foo = foo version 3
+
+
+#spring.cloud.config.discovery.enabled 是从配置中心读取文件。
+#spring.cloud.config.discovery.serviceId 配置中心的servieId，即服务名。
+#这时发现，在读取配置文件不再写ip地址，而是服务名，这时如果配置服务部署多份，通过负载均衡，从而高可用。
+#
+#依次启动eureka-servr,config-server,config-client
+#访问网址：http://localhost:8889/
+
+
+#自我总结：
+#原本客户端config-client读取文件直接从文件配置的服务config-service发出请求，然后文件配置服务从
+#远程仓库git获取客户端所需要的配置文件返回给客户端config-client，而现在是将文件配置服务做成
+#集群，其意义是为了解决如果有多个客户端同时请求配置文件，可以加上负载均衡的结构大大减小文件配置
+#服务的压力使其达到高可用。
+
+
+
+超大的坑：
+springboot2.0及以后的配置有了不小的改变，之前的写法已经不在
+在management.endpoints.web.exposure.include 接口暴露中一定要是 include，如果是exclude则无法发出post请求
